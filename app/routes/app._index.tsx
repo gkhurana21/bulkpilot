@@ -13,14 +13,13 @@ import {
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { authenticate } from "../shopify.server";
+import { applyBulkPriceChange, fetchVariants } from "../services/bulk.server";
 import {
   adjustmentLabel,
-  applyBulkPriceChange,
   computeNewPrice,
-  fetchVariants,
   type AdjustmentType,
   type PriceChange,
-} from "../services/bulk.server";
+} from "../services/pricing";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
@@ -289,7 +288,7 @@ export default function Index() {
                   <s-table-cell>{row.price}</s-table-cell>
                   <s-table-cell>
                     {newPrice ? (
-                      <s-text fontWeight="bold">{newPrice}</s-text>
+                      <s-text type="strong">{newPrice}</s-text>
                     ) : (
                       <s-text color="subdued">—</s-text>
                     )}
