@@ -77,7 +77,7 @@ export default function History() {
                 <s-table-row key={operation.id}>
                   <s-table-cell>
                     <s-stack>
-                      <s-text fontWeight="bold">{operation.adjustment}</s-text>
+                      <s-text type="strong">{operation.adjustment}</s-text>
                       {operation.items.length > 0 && (
                         <s-text color="subdued">
                           {operation.items.length} failed item
