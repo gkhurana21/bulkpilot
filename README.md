@@ -4,6 +4,9 @@ An embedded Shopify app that lets merchants bulk-edit variant prices across thei
 
 Editing prices one variant at a time in the Shopify admin doesn't scale past a handful of products. Existing bulk editors apply changes blindly; if a 500-variant markdown goes wrong, there's no undo. BulkPilot treats bulk edits like database migrations: **preview → apply → (optionally) roll back**.
 
+<!-- TODO: replace with a real screenshot of the editor (preview table with current -> new prices) -->
+![BulkPilot editor — live preview of current vs. new prices](docs/screenshot-editor.png)
+
 ## Features
 
 - **Search & filter** the catalog using Shopify's native search syntax (`vendor:Acme`, `tag:sale`, free text)
