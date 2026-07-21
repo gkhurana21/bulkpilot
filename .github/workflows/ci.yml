@@ -4,30 +4,33 @@ name: CI
 
 jobs:
   CI:
-    name: Node ${{ matrix.node }} and ${{ matrix.manager }}
+    name: Node ${{ matrix.node }}
     runs-on: ubuntu-latest
     strategy:
+      # don't cancel the whole matrix when one leg fails — fail-fast was hiding
+      # which job actually broke and red-X'ing every open PR
+      fail-fast: false
       matrix:
+        # matches "engines.node": ">=20.19 <22 || >=22.12"
         node: [20.19.0, 22, 24]
-        manager: ['npm', 'yarn', 'pnpm']
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{ matrix.node }}
+          cache: npm
 
-      - name: Install pnpm
-        if: ${{ matrix.manager == 'pnpm' }}
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
-        with:
-          version: 8
+      # this repo only maintains package-lock.json, so install reproducibly from it.
+      # the upstream template also tested yarn/pnpm, which resolved fresh trees with
+      # no lockfile and broke on the engines range — that was the actual CI failure.
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Install dependencies using ${{ matrix.manager }}
-        run: ${{ matrix.manager }} install
-
+      # react-router 7 generates types into .react-router/types, so a bare
+      # `tsc --noEmit` fails on a fresh checkout.
+      # npm run typecheck = react-router typegen && tsc --noEmit
       - name: Run TypeScript type checking
-        if: ${{ !startsWith(github.head_ref || github.ref_name, 'javascript') }}
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: Run ESLint
         run: npm run lint
